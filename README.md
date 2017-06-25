@@ -10,7 +10,8 @@ Installation
 
 Requirements:
 
-  - tmux **`>= 2.1`** running inside Linux, Mac, OpenBSD or Cygwin
+  - tmux **`>= 2.1`** running inside Linux, Mac, OpenBSD, Cygwin or WSL (Bash on
+    Ubuntu on Windows)
   - outside of tmux, `$TERM` must be set to `xterm-256color`
 
 To install, run the following from your terminal: (you may want to backup your
@@ -49,10 +50,10 @@ Troubleshooting
    `wcwidth()` function. When these two functions disagree, display gets messed
    up.
 
-   This can also happen on MacOS when using iTerm2 and "Use Unicode version 9
+   This can also happen on macOS when using iTerm2 and "Use Unicode version 9
    character widths" is enabled in `Preferences... > Profiles > Text`
 
-   For that reason, the default `/.tmux.conf.local` file stopped using Unicode
+   For that reason, the default `~/.tmux.conf.local` file stopped using Unicode
    characters for which width changed in between Unicode 8.0 and 9.0 standards,
    as well as Emojis.
 
@@ -64,13 +65,17 @@ Troubleshooting
    sure your `~/.tmux.conf.local` copy uses the right code points for
    `tmux_conf_theme_left_separator_XXX` values.
 
- - **I'm using Bash On Windows (WSL) and colors are broken.**
+ - **I'm using Bash On Windows (WSL), colors and Powerline look are broken.**
 
    There is currently a [bug][1681] in the new console powering Bash On Windows
    preventing text attributes (bold, underscore, ...) to combine properly with
    colors. The workaround is to search your `~/.tmux.conf.local` copy and
-   replace attributes with `'none'`. The alternative is to use the
-   [Mintty terminal for WSL][wsltty].
+   replace attributes with `'none'`.
+
+   Also, until Window's console replaces its GDI based render with a DirectWrite
+   one, Powerline symbols will be broken.
+
+   The alternative is to use the [Mintty terminal for WSL][wsltty].
 
 [1681]: https://github.com/Microsoft/BashOnWindows/issues/1681
 [wsltty]: https://github.com/mintty/wsltty
@@ -90,6 +95,8 @@ Features
  - optional highlight of focused pane (tmux `>= 2.1`)
  - configurable new windows and panes behavior (optionally retain current path)
  - SSH aware split pane (reconnects to remote server, experimental)
+ - copy to OS clipboard (needs [`reattach-to-user-namespace`][reattach-to-user-namespace]
+   on macOS)
  - [Facebook PathPicker][] integration if available
  - [Urlview][] integration if available
 
@@ -184,10 +191,10 @@ customize it further to your needs. Instead of altering the `~/.tmux.conf` file
 and diverging from upstream, the proper way is to edit the `~/.tmux.conf.local`
 file.
 
-Please refer to the default `.tmux.conf.local` file to know more about variables
-you can adjust to alter different behaviors. Pressing `<prefix> e` will open
-`~/.tmux.conf.local` with the editor defined by the `$EDITOR` environment
-variable (defaults to `vim` when empty).
+Please refer to the default `~/.tmux.conf.local` file to know more about
+variables you can adjust to alter different behaviors. Pressing `<prefix> e`
+will open `~/.tmux.conf.local` with the editor defined by the `$EDITOR`
+environment variable (defaults to `vim` when empty).
 
 ### Enabling the Powerline look
 
@@ -255,7 +262,7 @@ This configuration supports the following builtin variables:
  - `#{username_ssh}`: SSH aware username information, blank when no SSH
    connection detected
 
-### Accessing the Mac OSX clipboard from within tmux sessions
+### Accessing the macOS clipboard from within tmux sessions
 
 [Chris Johnsen created the `reattach-to-user-namespace`
 utility][reattach-to-user-namespace] that makes `pbcopy` and `pbpaste` work
@@ -276,6 +283,11 @@ Once installed, `reattach-to-usernamespace` will be automatically detected.
 [Homebrew]: http://brew.sh/
 
 ### Using the configuration under Cygwin within Mintty
+
+**I don't recommend running this configuration with Cygwin anymore. Forking
+under Cygwin is extremely slow and this configuration issues a lot of
+`run-shell` commands under the hood. As such, you will experience high CPU
+usage. As an alternative consider using [Mintty terminal for WSL][wsltty].**
 
 ![cygwin](https://cloud.githubusercontent.com/assets/553208/19741789/67a3f3d8-9bc2-11e6-9ecc-499fc0228ee6.png)
 
